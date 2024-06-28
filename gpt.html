@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Randomly Moving Dots with Traces</title>
+    <style>
+      canvas {
+        border: 1px solid black;
+        background-color: black;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="canvas" width="1700" height="800" ></canvas>
+    <script>
+      const canvas = document.getElementById("canvas");
+      const ctx = canvas.getContext("2d");
+
+      const dots = [
+        { x: Math.random() * canvas.width, y: Math.random() * canvas.height, dx: Math.random() * 5, dy: Math.random() * 5, color: 'yellow', traces: [] },
+        { x: Math.random() * canvas.width, y: Math.random() * canvas.height, dx: Math.random() * 5, dy: Math.random() * 5, color: 'white', traces: [] },
+        { x: Math.random() * canvas.width, y: Math.random() * canvas.height, dx: Math.random() * 5, dy: Math.random() * 5, color: 'white', traces: [] },
+{ x: Math.random() * canvas.width, y: Math.random() * canvas.height, dx: Math.random() * 5, dy: Math.random() * 5, color: 'yellow', traces: [] },
+        { x: Math.random() * canvas.width, y: Math.random() * canvas.height, dx: Math.random() * 5, dy: Math.random() * 5, color: 'white', traces: [] },
+        { x: Math.random() * canvas.width, y: Math.random() * canvas.height, dx: Math.random() * 5, dy: Math.random() * 5, color: 'white', traces: [] },
+        { x: Math.random() * canvas.width, y: Math.random() * canvas.height, dx: Math.random() * 5, dy: Math.random() * 5, color: 'yellow', traces: [] },
+        { x: Math.random() * canvas.width, y: Math.random() * canvas.height, dx: Math.random() * 5, dy: Math.random() * 5, color: 'white', traces: [] },
+        { x: Math.random() * canvas.width, y: Math.random() * canvas.height, dx: Math.random() * 5, dy: Math.random() * 5, color: 'yellow', traces: [] },
+{ x: Math.random() * canvas.width, y: Math.random() * canvas.height, dx: Math.random() * 5, dy: Math.random() * 5, color: 'white', traces: [] },
+        { x: Math.random() * canvas.width, y: Math.random() * canvas.height, dx: Math.random() * 5, dy: Math.random() * 5, color: 'white', traces: [] },
+        { x: Math.random() * canvas.width, y: Math.random() * canvas.height, dx: Math.random() * 5, dy: Math.random() * 5, color: 'yellow', traces: [] },        { x: Math.random() * canvas.width, y: Math.random() * canvas.height, dx: Math.random() * 5, dy: Math.random() * 5, color: 'yellow', traces: [] },
+        { x: Math.random() * canvas.width, y: Math.random() * canvas.height, dx: Math.random() * 5, dy: Math.random() * 5, color: 'white', traces: [] },
+        { x: Math.random() * canvas.width, y: Math.random() * canvas.height, dx: Math.random() * 5, dy: Math.random() * 5, color: 'white', traces: [] },
+{ x: Math.random() * canvas.width, y: Math.random() * canvas.height, dx: Math.random() * 5, dy: Math.random() * 5, color: 'white', traces: [] },
+        { x: Math.random() * canvas.width, y: Math.random() * canvas.height, dx: Math.random() * 5, dy: Math.random() * 5, color: 'yellow', traces: [] },
+        { x: Math.random() * canvas.width, y: Math.random() * canvas.height, dx: Math.random() * 5, dy: Math.random() * 5, color: 'aqua', traces: [] },
+      ];
+
+      function drawDot(x, y, color) {
+        ctx.beginPath();
+        ctx.arc(x, y, 5, 0, Math.PI * 2);
+        ctx.fillStyle = color;
+        ctx.fill();
+        ctx.closePath();
+      }
+
+      function moveDot(dot) {
+        dot.traces.push({ x: dot.x, y: dot.y });
+
+        if (dot.traces.length > 20) {
+          dot.traces.shift();
+        }
+
+        dot.x += dot.dx;
+        dot.y += dot.dy;
+
+        if (dot.x + 10 > canvas.width || dot.x - 10 < 0) {
+          dot.dx = -dot.dx;
+        }
+        if (dot.y + 10 > canvas.height || dot.y - 10 < 0) {
+          dot.dy = -dot.dy;
+        }
+
+        drawDot(dot.x, dot.y, dot.color);
+
+        dots.forEach(otherDot => {
+          if (dot !== otherDot) {
+            let dx = dot.x - otherDot.x;
+            let dy = dot.y - otherDot.y;
+            let distance = Math.sqrt(dx * dx + dy * dy);
+
+            if (distance < 20) {
+              dot.dx = -dot.dx;
+              dot.dy = -dot.dy;
+              otherDot.dx = -otherDot.dx;
+              otherDot.dy = -otherDot.dy;
+            }
+          }
+        });
+
+        dot.traces.forEach((trace, index) => {
+          ctx.globalAlpha = index / dot.traces.length;
+          drawDot(trace.x, trace.y, dot.color);
+        });
+        ctx.globalAlpha = 1;
+      }
+
+      function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        dots.forEach(dot => {
+          moveDot(dot);
+        });
+
+        requestAnimationFrame(animate);
+      }
+
+      animate();
+    </script>
+  </body>
+</html>
